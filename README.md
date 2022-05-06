@@ -1,35 +1,62 @@
 
 # Rapport
-- Ett kortfattat svar är att föredra. Svar som är längre än en sida text (skärmdumpar och programkod exkluderat) är onödigt långt.
-- Svaret skall ha minst en snutt programkod.
-- Svaret skall inkludera en kort övergripande förklarande text som redogör för vad respektive snutt programkod gör eller som svarar på annan teorifråga.
-- Svaret skall ha minst en skärmdump. Skärmdumpar skall illustrera exekvering av relevant programkod. Eventuell text i skärmdumpar måste vara läsbar.
-- I de fall detta efterfrågas, dela upp delar av ditt svar i för- och nackdelar. Dina för- respektive nackdelar skall vara i form av punktlistor med kortare stycken (3-4 meningar).
 
-Programkod ska se ut som exemplet nedan. Koden måste vara korrekt indenterad då den blir lättare att läsa vilket gör det lättare att hitta syntaktiska fel.
+Ett enkelt program som startar en aktivitet med en knapp för att ta sig till andra aktiviteten. I andra aktiviteten finns det en edit text
+där användaren själv får välja vad som ska stå i första aktiviteten när appen startas om.
 
+Första aktiviteten startar med en oncreate, där en text field existerar samt en knapp med en onClick metod.
+```java
+button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SecondActivity.class);
+                startActivity(intent);
+            }
+        });
 ```
-function errorCallback(error) {
-    switch(error.code) {
-        case error.PERMISSION_DENIED:
-            // Geolocation API stöds inte, gör något
-            break;
-        case error.POSITION_UNAVAILABLE:
-            // Misslyckat positionsanrop, gör något
-            break;
-        case error.UNKNOWN_ERROR:
-            // Okänt fel, gör något
-            break;
+
+andra aktiviteten sätter upp sharedpreferences där en text redigerare existerar samt en knapp för att spara
+informationen.
+```java
+button.setOnClickListener(new View.OnClickListener() {
+@Override
+public void onClick(View v) {
+
+                editor = sharedPreferences.edit();
+                editor.putString("textInput", editText.getText().toString());
+                editor.apply();
+            }
+        });
+```
+
+Detta i sin tur redigerar textView i activity_main xml som visas inuti första aktiviteten.
+```xml
+<TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        app:layout_constraintBottom_toTopOf="@+id/activityButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
+```
+
+Där koden i onResume ser till att den redigerade texten blir sparad.
+```java
+protected void onResume() {
+        super.onResume();
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
+        String textInput = sharedPreferences.getString("textInput", "");
+
+        textView = findViewById(R.id.textView);
+        textView.setText(textInput);
     }
-}
 ```
+Första aktiviteten:
+![](Screenshot1.png)
+Andra aktiviteten:
+![](Screenshot2.png)
+Första aktiviteten efter redigerad text:
+![](Screenshot3.png)
 
-Bilder läggs i samma mapp som markdown-filen.
-
-![](android.png)
-
-Läs gärna:
-
-- Boulos, M.N.K., Warren, J., Gong, J. & Yue, P. (2010) Web GIS in practice VIII: HTML5 and the canvas element for interactive online mapping. International journal of health geographics 9, 14. Shin, Y. &
-- Wunsche, B.C. (2013) A smartphone-based golf simulation exercise game for supporting arthritis patients. 2013 28th International Conference of Image and Vision Computing New Zealand (IVCNZ), IEEE, pp. 459–464.
-- Wohlin, C., Runeson, P., Höst, M., Ohlsson, M.C., Regnell, B., Wesslén, A. (2012) Experimentation in Software Engineering, Berlin, Heidelberg: Springer Berlin Heidelberg.

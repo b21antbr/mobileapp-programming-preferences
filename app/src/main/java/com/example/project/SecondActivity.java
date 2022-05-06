@@ -33,7 +33,6 @@ public class SecondActivity extends AppCompatActivity {
 
                 editor = sharedPreferences.edit();
                 editor.putString("textInput", editText.getText().toString());
-                //editor.commit();
                 editor.apply();
             }
         });
